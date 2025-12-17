@@ -205,7 +205,7 @@ export default function App() {
                   <AlertDialogTrigger className="bg-red-500 hover:bg-red-700 px-3 rounded-lg mx-2">Delete</AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Bạn có chắc chắn xóa cuốn sách này</AlertDialogTitle>
+                      <AlertDialogTitle>Bạn có chắc chắn xóa cuốn sách "{item.title}"</AlertDialogTitle>
                       <AlertDialogDescription>
                 
                       </AlertDialogDescription>
