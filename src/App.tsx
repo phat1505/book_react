@@ -39,15 +39,7 @@ export default function App() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(100); // giả lập
   const limit = 10;
-  useEffect(() => {
-    // 1. Fetch ALL để lấy total
-    fetch(API_URL)
-      .then(res => res.json())
-      .then((all: IBook[]) => {
-        setTotalPages(Math.ceil(all.length / limit));
-      });
-
-    // 2. Fetch theo page
+  const fetchBooks = (page: number) => {
     const url = new URL(API_URL);
     url.searchParams.set("page", String(page));
     url.searchParams.set("limit", String(limit));
@@ -57,6 +49,19 @@ export default function App() {
       .then((data: IBook[]) => {
         setFormData(data);
       });
+  };
+  const fetchTotalPages = () => {
+    fetch(API_URL)
+      .then(res => res.json())
+      .then((all: IBook[]) => {
+        setTotalPages(Math.ceil(all.length / limit));
+      });
+  };
+
+  useEffect(() => {
+    // 1. Fetch ALL để lấy total
+    fetchBooks(page);
+    fetchTotalPages();
   }, [page]);
 
 
@@ -116,10 +121,11 @@ export default function App() {
       }),
     })
       .then(res => res.json())
-      .then((newBook: IBook) => {
-        setFormData(prev => [...prev, newBook]);
+      .then(() => {
         resetForm();
         setIsOpen(false);
+        fetchTotalPages();
+        fetchBooks(page);
       });
   }
   function openEditBook(item: IBook) {
@@ -161,7 +167,8 @@ export default function App() {
       method: "DELETE",
     })
       .then(() => {
-        setFormData(prev => prev.filter(book => book.id !== item.id));
+        fetchTotalPages();
+        fetchBooks(page);
       });
   }
   function resetForm() {
@@ -207,7 +214,7 @@ export default function App() {
                     <AlertDialogHeader>
                       <AlertDialogTitle>Bạn có chắc chắn xóa cuốn sách "{item.title}"</AlertDialogTitle>
                       <AlertDialogDescription>
-                
+
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
